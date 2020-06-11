@@ -2,6 +2,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 
 from app import app
 from apps import database_gui
@@ -9,8 +10,36 @@ from apps import database_gui
 # Assigning an empty Div tag to be formatted based on the url:
 app.layout = html.Div([
 
-        # Url that specifies page via callback return:
+        # Url that specifies page via callback return (Url bar, does not render anything):
         dcc.Location(id='url', refresh=False),
+
+        # Creating a Main Navbar that remains constant to every page:
+        dbc.Navbar(
+            [
+            # Main Navbar link to the main navigation page:
+            dbc.NavbarBrand('PDF Database GUI', href = '/', style={'font-size':'20px'}),
+
+            # Button Link to the database summary information page:
+            dbc.Button('PDF Database', href='/apps/database_gui', style={'font-size':'10px'}),
+
+            # User input to store path to sqlite database nested in formatting div tag:
+            html.Div(
+                id = 'database_path_string_div',
+                children = [
+                    dcc.Input(
+                        id='database_path_string',
+                        type='text',
+                        style = {'height':'auto', 'margin-bottom':'auto',
+                            'margin-left':'1.5em', 'width':'150%', 'height':'150%'},
+                        placeholder = 'Database Path String',
+                        debounce = True)
+                    ]
+                )
+
+            ],
+            color = 'dark',
+            dark = True
+        ),
 
         # Main Div tag that is formatted to create the page based on app.layouts:
         html.Div(id='main_content_div')
@@ -43,6 +72,7 @@ def display_page(pathname):
     # Conditional that selects the layout to be returned based on url pathname:
     if pathname == '/apps/database_gui':
         return database_gui.layout
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
